@@ -3,6 +3,7 @@ var ctx = $("#latencyChart").get(0).getContext("2d");
 var socket = io.connect(document.location.host);
 
 var interval = 100;
+var pingCount = 100;
 var pings = [];
 
 socket.on('connect', function() {
@@ -56,6 +57,7 @@ var displayResults = function(pings){
     };
 
     var myLineChart = new Chart(ctx).Line(data, {
+        responsive: true,
         scaleShowGridLines : false,
         showXLabels : 10
     });
@@ -65,8 +67,8 @@ var displayResults = function(pings){
 var runTest = function () {
 
     $('.btn').prop('disabled', true);
-    $('.progress-bar').css('animation', '0.2s linear 0s normal none infinite progress-bar-stripes')
-    $('.progress-bar').removeClass('progress-bar-success').css('width', '0%').attr('aria-valuenow', 0);
+    $('#graph').addClass('hide');
+    $("#knob").removeClass('hide');
 
     pings = [];
     var i = 0;
@@ -74,16 +76,26 @@ var runTest = function () {
     //Send ping message every 100ms
     var pingInterval = setInterval(function () {
 
-        if (i >= 100) {
+        if (i > pingCount) {
             clearInterval(pingInterval);
-            $('.progress-bar').addClass('progress-bar-success').css('width', '100%').attr('aria-valuenow', 100);
-            $('.btn').prop('disabled', false);
+            $('#knob').addClass('hide');
+            $('.dial')
+                .val(0)
+                .trigger('change');
+
+            $('#graph').removeClass('hide');
+
             displayResults(pings);
+
+            $('.btn').prop('disabled', false);
+
         }else {
 
             //Update the progress bar
-            var progress = i * interval / 100;
-            $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress);
+            var progress = i * 100 / pingCount;
+            $('.dial')
+                .val(progress)
+                .trigger('change');
 
             //Send ping
             pings[i] = {};
