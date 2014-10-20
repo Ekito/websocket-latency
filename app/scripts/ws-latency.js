@@ -1,4 +1,4 @@
-var ctx = $("#latencyChart").get(0).getContext("2d");
+//var ctx = $("#latencyChart").get(0).getContext("2d");
 
 var socket = io.connect(document.location.host);
 
@@ -22,8 +22,6 @@ var displayResults = function(pings){
         return data.stop - data.start;
     });
 
-    console.log(latencies);
-
     var min = latencies.reduce(function(a, b) { return Math.min(a,b); });
     var max = latencies.reduce(function(a, b) { return Math.max(a,b); });
     var sum = latencies.reduce(function(a, b) { return a + b; });
@@ -31,36 +29,24 @@ var displayResults = function(pings){
 
     console.log(min);
     console.log(max);
-    console.log(sum);
     console.log(avg);
 
-    console.log(latencies.keys());
+    $('#minLatency')[0].innerHTML = 'Min : ' + min;
+    $('#maxLatency')[0].innerHTML = 'Max : ' + max;
+    $('#avgLatency')[0].innerHTML = 'Average : ' + avg;
 
-    var labels = []
-    for (var i = 0; i < 100; ++i)
-        labels[i] = i;
-
-    var data = {
-        labels: labels,
-        datasets: [
-            {
-                label: "My First dataset",
-                fillColor: "rgba(220,220,220,0.2)",
-                strokeColor: "rgba(220,220,220,1)",
-                pointColor: "rgba(220,220,220,1)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(220,220,220,1)",
-                data: latencies
-            }
-        ]
-    };
-
-    var myLineChart = new Chart(ctx).Line(data, {
-        responsive: true,
-        scaleShowGridLines : false,
-        showXLabels : 10
+    var i = 1;
+    var latenciesData = latencies.map(function(data){
+        result = [i, data];
+        i++;
+        return result;
     });
+
+    g2 = new Dygraph(document.getElementById("graph"),
+        latenciesData,
+        {
+            labels: [ "x", "Websocket latency" ]
+        });
 
 };
 
