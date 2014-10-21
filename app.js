@@ -25,9 +25,17 @@ server.listen(app.get('port'), function(){
 var io = SocketIO.listen(server);
 
 io.sockets.on('connection', function(socket){
-	
+
+    console.log("Connected with client : " + socket.id );
+    console.log("Transport : " + JSON.stringify(socket.conn.transport));
+
 	socket.on('ping', function(data) {
-        console.log("Ping received, send pong response");
+        if (!socket.upgraded && socket.conn.upgraded){
+            socket.upgraded = true;
+            console.log("Upgraded : " + socket.conn.upgraded);
+        }
+
+
 		socket.emit('pong', data);
 	});
 });
