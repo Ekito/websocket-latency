@@ -64,16 +64,21 @@ var runTest = function () {
 
         if (i > pingCount) {
             clearInterval(pingInterval);
-            $('#knob').addClass('hide');
-            $('.dial')
-                .val(0)
-                .trigger('change');
 
-            $('#graph').removeClass('hide');
+            //Wait 1 seconde to get the latest ws response
+            setTimeout(function() {
+                $('#knob').addClass('hide');
+                $('.dial')
+                    .val(0)
+                    .trigger('change');
 
-            displayResults(pings);
+                $('#graph').removeClass('hide');
 
-            $('.btn').prop('disabled', false);
+                displayResults(pings);
+
+                $('.btn').prop('disabled', false);
+
+            },1000);
 
         }else {
 
