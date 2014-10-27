@@ -39,4 +39,7 @@ io.sockets.on('connection', function(socket){
 		socket.emit('pong', data);
 	});
 });
- 
+
+app.get('/ping', function(req, res){
+  res.send(req.query);
+});
